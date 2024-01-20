@@ -1,57 +1,49 @@
 import React, { Component } from 'react';
 import { ProductObjectType } from '../App';
 import './ProductDescription.scss'
+import cardStore from "../stores/cardStore";
 
-interface CardPropsType {
-  getSelectedCardData: () => (number|null);
-  myMap: Map<number, ProductObjectType>;
-}
 
 
 interface MyComponentState {
-   curCard:number|null;
+   selectedCard : ProductObjectType;
 }
 
 
 
-class ProductDescription extends Component<CardPropsType,MyComponentState> {
+class ProductDescription extends Component<{},MyComponentState> {
+
+  state = {
+    selectedCard: cardStore.getSelectedCard(),
+  };
 
 
-  // state={
-  //   // cardObj:{}
-  //   curCard:null,
-  // }
+  componentDidMount(): void {
+    cardStore.addChangeListener(this.handleCardStoreChange);
+  }
 
+  componentWillUnmount(): void {
+    cardStore.removeChangeListener(this.handleCardStoreChange);
+  }
 
-  // componentDidMount() {
-  //   this.updateObjectData();
-  // }
-
-  // componentDidUpdate(prevProps: Readonly<CardPropsType>, prevState: Readonly<MyComponentState>, snapshot?: any): void {
-    
-  // }
-
-  // updateObjectData() {
-  //   let objectData:ProductObjectType =this.props.getSelectedCardData();
-
-  //   this.setState({
-  //     cardObj: objectData,
-  //   });
-  // }
-
+  handleCardStoreChange = (): void => {
+    this.setState({
+      selectedCard: cardStore.getSelectedCard(),
+    });
+  };
 
 
   render() {
-    let curCard:number|null= this.props.getSelectedCardData();
+    let curCard:ProductObjectType=cardStore.getSelectedCard();
+    // console.log(curCard);
     if(curCard==null)
     {
-      return <p>Nothing here</p>
+      return <p>No card selected</p>
     }
-    let cardData:ProductObjectType=this.props.myMap.get(curCard)!;
     return (
       <>
-        <p>{cardData.title}</p>
-        <img className='imageStyle' src={cardData.images[0]} alt={cardData.title}/>
+        <p>{curCard.title}</p>
+        <img className='imageStyle' src={curCard.images[0]} alt={curCard.title}/>
       </>
     );
   }

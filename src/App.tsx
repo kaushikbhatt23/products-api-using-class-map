@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './App.scss';
 import ProductList from './Components/ProductList';
 import ProductDescription from './Components/ProductDescription';
+import cardStore from './stores/cardStore'
+import { getCards } from './actions/cardActions';
 
 
 
@@ -14,74 +16,45 @@ export type ProductObjectType = {
 };
 
 
-interface ComponentState {
-  loading: Boolean;
-  selectedCardId:number|null;
+interface MyComponentState {
+  cards : ProductObjectType[]
 }
 
 
 
-class App extends Component<{},ComponentState>{
 
-  myMap: Map<number, ProductObjectType> = new Map();
+class App extends Component<{},MyComponentState>{
 
-
-  state = {
-    loading:true,
-    selectedCardId:null,
-  };
-
-
-  
-
-
-  componentDidMount() {     // instead of useEffect 
-    this.fetchData();
+  state={
+    cards:cardStore.getCards(),
   }
 
-  fetchData = async () => {
-    try {
-      const response = await fetch('https://dummyjson.com/products');
-      const jsonData = await response.json();
-      this.myMap = new Map(jsonData.products.map((item: ProductObjectType) => [item.id, item]));
-
-      this.setState({
-        loading: false,
-      });
-    } catch (error) {
-      console.error('Error fetching data:', error);
+  componentDidMount() {
+    cardStore.addChangeListener(this.onChange);
+    if (cardStore.getCards().length === 0) {
+      getCards();
     }
-  };
+  }
 
+  componentWillUnmount() {
+    cardStore.removeChangeListener(this.onChange);
+  }
 
-  changeSelectedCard = (cardId: number) => {
+  onChange = () => {
     this.setState({
-      selectedCardId: cardId,
-    },()=>console.log(this.state.selectedCardId));
+      cards: cardStore.getCards(),
+    },()=>console.log(this.state.cards));
   };
-
-
-
-
-  getSelectedCardData=()=>this.state.selectedCardId;
-
 
   render() {
-    const { loading } = this.state;
     return (
       <div className="App">
-        {loading ? (
+        {cardStore.getCards().length===0? (
           <p>Loading.....</p>
         ) : (
           <div className='AppStyle'>
-            <ProductList 
-              changeSelectedCard={this.changeSelectedCard} 
-              myMap={this.myMap}
-            />
-            <ProductDescription  
-              getSelectedCardData={this.getSelectedCardData} 
-              myMap={this.myMap}
-            />
+            <ProductList/>
+            <ProductDescription/>
           </div>
         )}
       </div>

@@ -1,25 +1,37 @@
 import React, { Component } from 'react';
 import './ListCard.scss';
 import { ProductObjectType } from '../App';
+import cardStore from "../stores/cardStore";
 
 interface CardProps {
-  changeSelectedCard: (cardId: number) => void
   productDetails: ProductObjectType;
 }
 
 class Card extends Component<CardProps> {
-  handleClick = () => {
-      this.props.changeSelectedCard(this.props.productDetails.id);
+
+  handleDelete = () => {
+    const id = this.props.productDetails.id;
+    cardStore.deleteCard(id); 
   };
+
+
+
+  handleButtonClick = () => {
+    const newCard :ProductObjectType=this.props.productDetails ;
+    cardStore.changeSelectedCard(newCard);
+  };
+
 
   render() {
     const { title, description } = this.props.productDetails;
 
     return (
-      <div className='cardStyle' onClick={this.handleClick}>
+      <div className='cardStyle'>
         <h3>{title}</h3>
         <hr className='lineStyle' />
         <p>{description}</p>
+        <button onClick={this.handleDelete}>Delete</button>
+        <button onClick={this.handleButtonClick}>Select</button>
       </div>
     );
   }

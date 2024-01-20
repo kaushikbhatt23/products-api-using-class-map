@@ -1,30 +1,54 @@
-import React, { Component } from 'react';
-import { ProductObjectType } from '../App';
+import React, { useState, useEffect ,Component} from "react";
+import cardStore from "../stores/cardStore";
+import { ProductObjectType } from "../App";
 import ListCard from './ListCard'; 
 import './ProductList.scss'
+import { getCards } from "../actions/cardActions";
 
 
 
-interface ProductDescriptionProps {
-    changeSelectedCard: (cardId: number) => void
-    myMap: Map<number, ProductObjectType>;
+
+interface MyComponentState {
+  cards : ProductObjectType[]
 }
 
-class ProductList extends Component<ProductDescriptionProps, {}> {
+
+
+class ProductList extends Component<{},MyComponentState>{
+  
+    // state={
+    //   cards:cardStore.getCards(),
+    // }
+
+
+    // componentDidMount() {
+    //   cardStore.addChangeListener(this.onChange);
+    //   if (cardStore.getCards().length === 0) {
+    //     getCards();
+    //   }
+    // }
+  
+    // componentWillUnmount() {
+    //   cardStore.removeChangeListener(this.onChange);
+    // }
+  
+    // onChange = () => {
+    //   this.setState({
+    //     cards: cardStore.getCards(),
+    //   });
+    // };
+
     render() {
-        const { myMap } = this.props; 
+        const cards:ProductObjectType[]=cardStore.getCards()!;
         return (
-          <div className='containerStyle'>
-            {Array.from(myMap.entries()).map(([productId, productDetails]) => (
-              <ListCard
-                key={productId}
-                productDetails={productDetails}
-                changeSelectedCard={this.props.changeSelectedCard}
-              />
-            ))}
-          </div>
+            <div className='containerStyle'>
+              {cards.map((item:ProductObjectType)=>
+                <ListCard key={item.id}productDetails={item}/>
+              )}
+            </div>
         );
       }
 }
 
 export default ProductList;
+
