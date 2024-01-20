@@ -1,46 +1,25 @@
 import dispatcher from "../appDispatcher";
 import actionTypes from "./actionTypes";
 import data from "../db.json";
-import { json } from "stream/consumers";
-
-
-
+import axios from 'axios';
 
 
 export function getCards() {
-    dispatcher.dispatch({
-        actionTypes: actionTypes.GET_CARDS,
-        cards: data['products'],
-        // cards: fetch('https://dummyjson.com/products')
-        // .then(res=>res.json())
-        // .then(res => res['products'])
+    dispatcher.dispatch({ type: actionTypes.FETCH_DATA_PENDING });  
+
+    // Make the API request 
+    axios.get('https://dummyjson.com/products')
+    .then(response=>{
+        dispatcher.dispatch({
+        actionTypes: actionTypes.FETCH_DATA_SUCCESS,
+        payload: response.data.products,
+    });
+    })
+    .catch(error => {
+        dispatcher.dispatch({
+        type: actionTypes.FETCH_DATA_FAILURE,
+        payload: error.message,
+    });
     });
 }
-
-
-
-// export function deleteCard(cardId) {
-//     dispatcher.dispatch({
-//       type: actionTypes.DELETE_CARD,
-//       id: cardId,
-//     });
-// }
-
-
-// export function getSelectedCard(card) {
-//   dispatcher.dispatch({
-//     type: actionTypes.GET_SELECTED_CARD,
-//     card,
-//   });
-// }
-
-
-
-// export function changeSelectedCard(newCard) {
-//   dispatcher.dispatch({
-//     type: actionTypes.CHANGE_SELECTED_CARD,
-//     newCard,
-//   });
-// }
-
 

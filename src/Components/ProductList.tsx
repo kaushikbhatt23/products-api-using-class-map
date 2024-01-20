@@ -8,42 +8,17 @@ import { getCards } from "../actions/cardActions";
 
 
 
-interface MyComponentState {
-  cards : ProductObjectType[]
-}
 
 
 
-class ProductList extends Component<{},MyComponentState>{
+class ProductList extends Component<{}>{
   
-    // state={
-    //   cards:cardStore.getCards(),
-    // }
-
-
-    // componentDidMount() {
-    //   cardStore.addChangeListener(this.onChange);
-    //   if (cardStore.getCards().length === 0) {
-    //     getCards();
-    //   }
-    // }
-  
-    // componentWillUnmount() {
-    //   cardStore.removeChangeListener(this.onChange);
-    // }
-  
-    // onChange = () => {
-    //   this.setState({
-    //     cards: cardStore.getCards(),
-    //   });
-    // };
-
     render() {
         const cards:ProductObjectType[]=cardStore.getCards()!;
         return (
             <div className='containerStyle'>
               {cards.map((item:ProductObjectType)=>
-                <ListCard key={item.id}productDetails={item}/>
+                <ListCard key={item.id} productDetails={item}/>
               )}
             </div>
         );

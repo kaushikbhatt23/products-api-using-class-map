@@ -17,7 +17,8 @@ export type ProductObjectType = {
 
 
 interface MyComponentState {
-  cards : ProductObjectType[]
+  loading: boolean;
+  error: string | null;
 }
 
 
@@ -26,7 +27,8 @@ interface MyComponentState {
 class App extends Component<{},MyComponentState>{
 
   state={
-    cards:cardStore.getCards(),
+    loading: cardStore.getLoading(),
+    error: cardStore.getError(),
   }
 
   componentDidMount() {
@@ -42,14 +44,16 @@ class App extends Component<{},MyComponentState>{
 
   onChange = () => {
     this.setState({
-      cards: cardStore.getCards(),
-    },()=>console.log(this.state.cards));
+      loading: cardStore.getLoading(),
+      error: cardStore.getError(),
+    });
   };
 
   render() {
+    const {loading}=this.state;
     return (
       <div className="App">
-        {cardStore.getCards().length===0? (
+        {loading? (
           <p>Loading.....</p>
         ) : (
           <div className='AppStyle'>

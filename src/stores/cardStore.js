@@ -6,6 +6,8 @@ import actionTypes from "../actions/actionTypes";
 const CHANGE_EVENT = "change";
 let _cards = [];
 let _selectedCard = null;
+let _loading = true;
+let _error = null;
 
 
 class CardStore extends EventEmitter {
@@ -24,6 +26,17 @@ class CardStore extends EventEmitter {
     getCards() {
         return _cards;
     }
+
+
+    getLoading() {
+        return _loading;
+    }
+
+
+    getError() {
+        return _error;
+    }
+    
 
     deleteCard(id) {
         const index = _cards.findIndex(card => card.id === id);
@@ -52,19 +65,23 @@ const store = new CardStore();
 
 dispatcher.register((action) => {
     switch (action.actionTypes) {
-        case actionTypes.GET_CARDS:
-            _cards = action.cards;
+        case actionTypes.FETCH_DATA_PENDING:
+            _loading = true;
+            _error = null;
             store.emitChange();
             break;
-        // case actionTypes.DELETE_CARD:
-        //     store.deleteCard(action.id);
-        //     break;
-        // case actionTypes.CHANGE_SELECTED_CARD:
-        //     store.changeSelectedCard(action.newCard);
-        //     break;
-        // case actionTypes.GET_SELECTED_CARD:
-        //     store.getSelectedCard();
-        //     break;
+        
+        case actionTypes.FETCH_DATA_SUCCESS:
+            _loading = false;
+            _cards = action.payload;
+            store.emitChange();
+            break;
+        
+        case actionTypes.FETCH_DATA_FAILURE:
+            _loading = false;
+            _error = action.payload;
+            store.emitChange();
+            break;
         default:
     }
 });
