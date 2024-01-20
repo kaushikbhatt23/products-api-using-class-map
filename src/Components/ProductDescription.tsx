@@ -4,22 +4,39 @@ import './ProductDescription.scss'
 import cardStore from "../stores/cardStore";
 
 
+interface MyComponentState{
+  selectedCard:ProductObjectType
+}
 
 
+class ProductDescription extends Component<{},MyComponentState> {
 
-class ProductDescription extends Component<{}> {
+  state={
+    selectedCard : cardStore.getSelectedCard()
+  }
 
+
+  onChange = () => {
+    this.setState({
+      selectedCard : cardStore.getSelectedCard()
+    });
+  };
+
+
+  componentDidMount(){
+    cardStore.addChangeListener(this.onChange);
+  }
 
   render() {
-    let curCard:ProductObjectType=cardStore.getSelectedCard();
-    if(curCard==null)
+    let {selectedCard}=this.state;
+    if(selectedCard==null)
     {
       return <p>No card selected</p>
     }
     return (
       <>
-        <p>{curCard.title}</p>
-        <img className='imageStyle' src={curCard.images[0]} alt={curCard.title}/>
+        <p>{selectedCard.title}</p>
+        <img className='imageStyle' src={selectedCard.images[0]} alt={selectedCard.title}/>
       </>
     );
   }
